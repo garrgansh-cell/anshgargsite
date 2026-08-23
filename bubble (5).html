@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ansh Garg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08060A; --bg2:#0C0808; --text:#F7F4F1; --text-dim:#C2BCB4; --text-faint:#78716A;
+    --amber:#FF9A2E; --gold:#FFD27A; --amber-soft:#FFB85C; --wine:#2A1206;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;background:radial-gradient(ellipse at 50% 30%, var(--bg2), var(--bg) 70%);color:var(--text);
+    font-family:'Inter',sans-serif;overflow-x:hidden;overflow-y:auto;position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .noise{position:fixed;inset:0;z-index:1;opacity:.05;pointer-events:none;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* drifting dust / stars */
+  .dust{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .dust i{position:absolute;border-radius:50%;background:var(--gold);opacity:0;animation:twinkle 6s ease-in-out infinite;}
+  @keyframes twinkle{0%,100%{opacity:0;transform:scale(0.6);}50%{opacity:var(--peak,.5);transform:scale(1);}}
+  @media (prefers-reduced-motion: reduce){.dust i{animation:none;opacity:.15;}}
+
+  main{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
+
+  .wordmark{position:fixed;top:28px;left:28px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);letter-spacing:0.16em;z-index:3;opacity:0;animation:fadein .9s ease .1s forwards;}
+  .wordmark span{color:var(--text);}
+  @keyframes fadein{to{opacity:1;}}
+  @media (prefers-reduced-motion: reduce){.wordmark{animation:none;opacity:1;}}
+
+  .stage{position:relative;width:min(56vw,540px);height:min(56vw,540px);display:flex;align-items:center;justify-content:center;}
+
+  /* eclipse ring glow — layered for depth */
+  .ring-glow{
+    position:absolute;inset:-4px;border-radius:50%;
+    background:conic-gradient(from 200deg, transparent 0deg, rgba(255,154,46,0.95) 30deg, rgba(255,210,122,0.7) 62deg, rgba(255,154,46,0.35) 95deg, transparent 130deg, transparent 360deg);
+    filter:blur(14px);
+    animation:ringspin 30s linear infinite;
+  }
+  .ring-glow-soft{
+    position:absolute;inset:-18px;border-radius:50%;
+    background:conic-gradient(from 200deg, transparent 0deg, rgba(255,154,46,0.5) 40deg, transparent 110deg, transparent 360deg);
+    filter:blur(34px);
+    animation:ringspin 30s linear infinite;
+  }
+  @keyframes ringspin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){.ring-glow,.ring-glow-soft{animation:none;}}
+
+  .halo{
+    position:absolute;inset:-90px;border-radius:50%;
+    background:radial-gradient(circle at 50% 18%, rgba(255,154,46,0.32), transparent 58%);
+    filter:blur(60px);pointer-events:none;
+  }
+
+  .circle{
+    position:relative;width:100%;height:100%;border-radius:50%;cursor:pointer;
+    background:
+      radial-gradient(circle at 50% 30%, #4a2c14 0%, #26150a 38%, #100a06 68%, #050403 100%);
+    box-shadow:
+      inset 0 -34px 80px rgba(0,0,0,0.7),
+      inset 0 26px 60px rgba(255,180,100,0.08),
+      inset 0 0 0 1px rgba(255,180,100,0.04);
+    display:flex;align-items:center;justify-content:center;
+    animation:float 8s ease-in-out infinite;
+    transition:transform .3s ease, box-shadow .3s ease;
+    opacity:0;transform:scale(0.94);animation:reveal 1.1s cubic-bezier(.2,.8,.2,1) .15s forwards, float 8s ease-in-out 1.1s infinite;
+  }
+  @keyframes reveal{to{opacity:1;transform:scale(1);}}
+  .circle:active{transform:scale(0.985);}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  @media (prefers-reduced-motion: reduce){.circle{animation:none;opacity:1;transform:none;}}
+
+  .content{position:relative;z-index:2;padding:0 9%;}
+
+  h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;margin:0;
+    font-size:clamp(1.55rem, 4vw, 2.5rem);
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    line-height:1.12;
+    background:linear-gradient(180deg, #FFFFFF 0%, var(--gold) 130%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    opacity:0;animation:riseIn .9s ease .5s forwards;
+  }
+  @keyframes riseIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){h1{animation:none;opacity:1;}}
+
+  .subline{
+    margin-top:18px;font-size:12.5px;line-height:1.7;color:var(--text-dim);
+    max-width:40ch;margin-left:auto;margin-right:auto;
+    opacity:0;animation:riseIn .9s ease .7s forwards;
+  }
+  @media (prefers-reduced-motion: reduce){.subline{animation:none;opacity:1;}}
+
+  .url-box{
+    margin-top:28px;display:inline-block;padding:12px 24px;
+    border:1px solid rgba(255,210,122,0.32);border-radius:3px;
+    background:rgba(255,180,100,0.04);
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:0.14em;
+    color:var(--gold);text-decoration:none;
+    transition:border-color .25s ease, background .25s ease, box-shadow .25s ease;
+    opacity:0;animation:riseIn .9s ease .9s forwards;
+  }
+  .url-box:hover{border-color:var(--gold);background:rgba(255,180,100,0.09);box-shadow:0 0 24px -6px rgba(255,154,46,0.5);}
+  @media (prefers-reduced-motion: reduce){.url-box{animation:none;opacity:1;}}
+
+  .counter{
+    margin-top:40px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.08em;
+    color:var(--text-faint);display:flex;align-items:center;justify-content:center;gap:8px;
+    flex-wrap:wrap;row-gap:6px;padding:0 12px;
+    opacity:0;animation:riseIn .9s ease 1.05s forwards;
+  }
+  @media (prefers-reduced-motion: reduce){.counter{animation:none;opacity:1;}}
+  .counter .led{width:5px;height:5px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px 1px var(--amber);flex-shrink:0;}
+  .counter b{color:var(--text-dim);font-weight:500;}
+  .counter.bump b{animation:bump .35s ease;}
+  @keyframes bump{0%{transform:scale(1);}40%{transform:scale(1.25);}100%{transform:scale(1);}}
+
+  .socials{
+    margin-top:26px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;row-gap:10px;
+    opacity:0;animation:riseIn .9s ease 1.2s forwards;
+  }
+  @media (prefers-reduced-motion: reduce){.socials{animation:none;opacity:1;}}
+  .socials a{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.1em;
+    color:var(--text-faint);text-decoration:none;text-transform:uppercase;
+    padding:9px 18px;border:1px solid rgba(247,244,241,0.14);border-radius:100px;
+    transition:color .2s ease, border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .socials a:hover{color:var(--gold);border-color:rgba(255,210,122,0.45);background:rgba(255,154,46,0.07);transform:translateY(-1px);}
+
+  footer{
+    position:relative;margin-top:40px;text-align:center;z-index:3;
+    font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);
+    letter-spacing:0.04em;padding:0 16px 30px;
+    opacity:0;animation:fadein 1s ease 1.4s forwards;
+  }
+  @media (prefers-reduced-motion: reduce){footer{animation:none;opacity:1;}}
+
+  .pop{position:absolute;border-radius:50%;border:1px solid rgba(255,210,122,.6);opacity:0;pointer-events:none;}
+  @keyframes ripple{0%{opacity:.85;transform:scale(0.6);}100%{opacity:0;transform:scale(1.9);}}
+
+  @media (max-width:480px){
+    main{padding:28px 18px 8px;}
+    .stage{width:78vw;height:78vw;}
+    .content{padding:0 13%;}
+    h1{font-size:1.28rem;letter-spacing:0.08em;}
+    .subline{font-size:10.5px;max-width:25ch;margin-top:12px;}
+    .url-box{margin-top:20px;padding:10px 18px;font-size:10px;}
+    .counter{margin-top:34px;font-size:10px;gap:6px;}
+    .socials{margin-top:20px;gap:10px;}
+    .socials a{font-size:10px;padding:8px 16px;}
+    footer{margin-top:34px;padding:0 16px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="dust" id="dust"></div>
+<div class="noise"></div>
+<div class="wordmark"><span>ANSH</span>GARG.IN</div>
+
+<main>
+  <div class="stage" id="stage">
+    <div class="halo"></div>
+    <div class="ring-glow-soft"></div>
+    <div class="ring-glow"></div>
+    <div class="circle" id="circle">
+      <div class="content">
+        <h1>Something Might Come</h1>
+        <p class="subline">All proprietary rights, operational control, and intellectual property associated with anshgarg.in belong exclusively to the lawful proprietor.</p>
+        <a class="url-box" href="#" onclick="return false;">ANSHGARG.IN</a>
+      </div>
+    </div>
+  </div>
+  <div class="counter" id="counter"><span class="led"></span><b id="counterNum">1,000+</b>&nbsp;people have checked back</div>
+  <div class="socials">
+    <a href="https://garrgansh.substack.com" target="_blank" rel="noopener">Substack</a>
+    <a href="https://instagram.com/anshgarrg" target="_blank" rel="noopener">Instagram</a>
+  </div>
+  <footer>© 2026 Ansh Garg.</footer>
+</main>
+
+<script>
+  const circle = document.getElementById('circle');
+  const stage = document.getElementById('stage');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ambient dust particles
+  (function(){
+    const dustEl = document.getElementById('dust');
+    if(reduceMotion){
+      for(let i=0;i<10;i++){
+        const s = document.createElement('i');
+        s.style.left = Math.random()*100+'%';
+        s.style.top = Math.random()*100+'%';
+        const size = 1+Math.random()*1.5;
+        s.style.width = size+'px'; s.style.height = size+'px';
+        s.style.setProperty('--peak', 0.15);
+        dustEl.appendChild(s);
+      }
+      return;
+    }
+    for(let i=0;i<28;i++){
+      const s = document.createElement('i');
+      s.style.left = Math.random()*100+'%';
+      s.style.top = Math.random()*100+'%';
+      const size = 1+Math.random()*2;
+      s.style.width = size+'px'; s.style.height = size+'px';
+      s.style.setProperty('--peak', (0.25+Math.random()*0.45).toFixed(2));
+      s.style.animationDuration = (4+Math.random()*6)+'s';
+      s.style.animationDelay = (Math.random()*8)+'s';
+      dustEl.appendChild(s);
+    }
+  })();
+
+  const COUNTER_NS = 'anshgarg-in';
+  const COUNTER_KEY = 'circle-clicks';
+  const BASE_OFFSET = 1000;
+  const counterNum = document.getElementById('counterNum');
+  const counterEl = document.getElementById('counter');
+  let localFallback = parseInt(localStorage.getItem('circleClicksLocal') || '0', 10);
+
+  function renderCount(n){
+    counterNum.textContent = n.toLocaleString() + (n >= BASE_OFFSET ? '+' : '');
+    counterEl.classList.remove('bump');
+    void counterEl.offsetWidth;
+    counterEl.classList.add('bump');
+  }
+
+  fetch(`https://abacus.jasoncameron.dev/get/${COUNTER_NS}/${COUNTER_KEY}`)
+    .then(r => r.json())
+    .then(d => { renderCount(BASE_OFFSET + (d.value || 0)); })
+    .catch(() => { renderCount(BASE_OFFSET + localFallback); });
+
+  function registerClick(){
+    fetch(`https://abacus.jasoncameron.dev/hit/${COUNTER_NS}/${COUNTER_KEY}`)
+      .then(r => r.json())
+      .then(d => { renderCount(BASE_OFFSET + d.value); })
+      .catch(() => {
+        localFallback += 1;
+        localStorage.setItem('circleClicksLocal', localFallback);
+        renderCount(BASE_OFFSET + localFallback);
+      });
+  }
+
+  circle.addEventListener('click', (e)=>{
+    if(e.target.closest('.url-box')) return;
+    registerClick();
+    if(reduceMotion) return;
+
+    for(let i=0;i<3;i++){
+      const ring = document.createElement('div');
+      ring.className = 'pop';
+      const size = 80 + i*60;
+      ring.style.width = size+'px';
+      ring.style.height = size+'px';
+      ring.style.left = '50%';
+      ring.style.top = '50%';
+      ring.style.marginLeft = -(size/2)+'px';
+      ring.style.marginTop = -(size/2)+'px';
+      ring.style.animation = `ripple ${0.9 + i*0.15}s ease-out forwards`;
+      ring.style.animationDelay = (i*0.08)+'s';
+      stage.appendChild(ring);
+      setTimeout(()=>ring.remove(), 1500);
+    }
+  });
+</script>
+
+</body>
+</html>
